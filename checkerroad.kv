@@ -1,0 +1,96 @@
+#:import MapView kivy.garden.mapview.MapView
+
+MDScreenManager:
+    id: sm
+    MainScreen:
+        id: main_screen
+    AddRouteScreen:
+        id: add_route
+
+
+<MainScreen>:
+    name: 'main_screen'
+    MDBoxLayout:
+        orientation: 'vertical'
+        MDTopAppBar:
+            title: "Тестер дороги"
+            elevation: 4
+            right_action_items: [["map-marker-plus", lambda x: root.add_new_route()]]
+        MDScrollView:
+            MDList:
+                id: list_route
+
+
+<AddRouteScreen>:
+    name: 'add_route'
+    MDBoxLayout:
+        orientation: "vertical"
+        MDTopAppBar:
+            title: "Добавление маршрута"
+            elevation: 4
+            left_action_items: [["arrow-left", lambda x: root.back_main_screen()]]
+            right_action_items: [["delete", lambda x: root.clear_input()]]
+        MDBoxLayout:
+            orientation: "vertical"
+            MDBoxLayout:
+                orientation: "vertical"
+                adaptive_height: True
+                MDTextField:
+                    id: out
+                    icon_left: "map-marker-up"
+                    hint_text: "От куда"
+                    mode: "rectangle"
+                MDTextField:
+                    id: in_1
+                    icon_left: "map-marker-down"
+                    hint_text: "Куда"
+                    mode: "rectangle"
+                MDBoxLayout:
+                    padding: [0, 20, 0, 0]
+                    adaptive_height: True
+                    orientation: "horizontal"
+                    MDLabel:
+                        halign: "center"
+                        id: type_car
+                        text: root.type_car
+                    MDRaisedButton:
+                        id: button
+                        padding: [100, 50]
+                        text: "Тип машины"
+                        on_release: root.type_car_choose()
+            MDBoxLayout:
+                orientation: "vertical"
+                MDRaisedButton:
+                    text: "Добавить маршрут"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    padding: [400, 100]
+                    on_release: root.add_route()
+
+
+
+<RouteDataScreen>:
+    MDBoxLayout:
+        orientation: "vertical"
+        MDTopAppBar:
+            title: root.name_list
+            elevation: 4
+            left_action_items: [["arrow-left", lambda x: root.back_main_screen()]]
+            right_action_items: [["delete", lambda x: root.clear_list()]]
+        MapView:
+            id: map
+            lat: app.gps_lat
+            lon: app.gps_lon
+            zoom: 12
+        MDBoxLayout:
+            adaptive_height: 'True'
+            orientation: "horizontal"
+            MDRaisedButton:
+                id: add
+                text: "Начать движение"
+                padding: [100, 100]
+                on_release: root.start_moving()
+            MDRaisedButton:
+                id: stop
+                text: "Закончить движение"
+                padding: [100, 100]
+                on_release: root.stop_moving()

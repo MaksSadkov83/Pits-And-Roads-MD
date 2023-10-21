@@ -2,12 +2,15 @@ import time
 
 from kivy.clock import Clock
 from kivy.graphics import Color, Line
+from kivy.properties import ObjectProperty
 from kivymd.app import MDApp
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
+from kivymd.uix.label import MDLabel
 from kivymd.uix.screen import MDScreen
 from kivy.properties import StringProperty
-from kivy_garden.mapview import MapMarker
+from kivy_garden.mapview import MapMarkerPopup
+from kivymd.uix.widget import MDWidget
 
 
 class RouteDataScreen(MDScreen):
@@ -53,19 +56,28 @@ class RouteDataScreen(MDScreen):
                     lat = float(gps_data[0])
                     lon = float(gps_data[1])
 
-                    if min_lat < lat < max_lat and min_lon < lon < max_lon:
-                        self.mapview.zoom -= 1
+                    marker = MapMarkerPopup(lat=lat, lon=lon, source='marker.png')
 
-                    marker = MapMarker(lat=lat, lon=lon, source='marker.png')
+                    widget = MDWidget(
+                        size_hint=[0.9, None],
+                        height=self.width,
+                        md_bg_color="black"
+                    )
+
+                    label = MDLabel(
+                        text=f"X: {gir_data[0]}, Y: {gir_data[1]}, Z: {gir_data[2]}\n"
+                             f"Дата: {datetime_data[0]}.{datetime_data[1]}.{datetime_data[2]} "
+                             f"{datetime_data[3]}:{datetime_data[4]}:{datetime_data[5]}"
+                    )
+
+                    widget.add_widget(label)
+
+                    marker.add_widget(widget)
 
                     self.mapview.add_widget(marker)
                     self.marker_point.append(marker)
 
-            center_point = self.marker_point[len(self.marker_point) // 2]
-
-            self.mapview.center_on(float(center_point[0]), float(center_point[1]))
-
-            Clock.schedule_once(self.get_point, 3)
+            # Clock.schedule_once(self.get_point, 2)
 
     def back_main_screen(self):
         self.manager.current = 'main_screen'
@@ -188,7 +200,7 @@ class RouteDataScreen(MDScreen):
         )
         self.gps_point = []
         self.data_gir_point = []
-        self.update_line_1 = Clock.schedule_interval(self.get_point, 3)
+        # self.update_line_1 = Clock.schedule_interval(self.get_point, 3)
         self.start_move_clock.cancel()
         self.connect.commit()
 
@@ -199,12 +211,26 @@ class RouteDataScreen(MDScreen):
             x, y, z = self.app.gir_x, self.app.gir_y, self.app.gir_z
             x, y, z = round(x, 4), round(y, 4), round(z, 4)
             year, month, day, hour, minute, second = time.localtime()[:6]
-            marker = MapMarker(
+            marker = MapMarkerPopup(
                 lat=lat,
                 lon=lon,
                 source="marker.png",
             )
 
+            widget = MDWidget(
+                size_hint=[1, 0.9],
+                md_bg_color="black"
+            )
+
+            label = MDLabel(
+                text=f"X: {x}, Y: {y}, Z: {z}\n"
+                     f"Дата: {day}.{month}.{year} "
+                     f"{hour}:{minute}:{second}"
+            )
+
+            widget.add_widget(label)
+
+            marker.add_widget(widget)
             self.marker_point.append(marker)
             self.mapview.add_widget(marker)
             self.gps_point.append(f"{lat},{lon}")

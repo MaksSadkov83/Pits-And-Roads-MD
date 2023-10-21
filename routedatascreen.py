@@ -77,7 +77,7 @@ class RouteDataScreen(MDScreen):
                     self.mapview.add_widget(marker)
                     self.marker_point.append(marker)
 
-            # Clock.schedule_once(self.get_point, 2)
+            Clock.schedule_once(self.get_point, 2)
 
     def back_main_screen(self):
         self.manager.current = 'main_screen'
@@ -200,7 +200,7 @@ class RouteDataScreen(MDScreen):
         )
         self.gps_point = []
         self.data_gir_point = []
-        # self.update_line_1 = Clock.schedule_interval(self.get_point, 3)
+        self.update_line_1 = Clock.schedule_interval(self.get_point, 3)
         self.start_move_clock.cancel()
         self.connect.commit()
 

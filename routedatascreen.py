@@ -200,7 +200,7 @@ class RouteDataScreen(MDScreen):
         )
         self.gps_point = []
         self.data_gir_point = []
-        self.update_line_1 = Clock.schedule_interval(self.get_point, 3)
+        Clock.schedule_once(self.get_point, 2)
         self.start_move_clock.cancel()
         self.connect.commit()
 
